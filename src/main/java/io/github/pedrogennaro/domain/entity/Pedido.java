@@ -14,10 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "Pedidos")
 public class Pedido {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Integer id;
 

@@ -2,6 +2,10 @@ package io.github.pedrogennaro.api.controller;
 
 import io.github.pedrogennaro.domain.entity.Cliente;
 import io.github.pedrogennaro.domain.repository.Clientes;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
@@ -15,6 +19,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/clientes")
+@Api("Api de Clientes")
 public class ClienteController {
 
     private Clientes clientesRepository;
@@ -24,6 +29,11 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation("Obter detalhes de um cliente")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Cliente encontrado"),
+            @ApiResponse(code = 404, message = "Cliente não encontrado para o Id informado")
+    })
     public Cliente getClienteById(@PathVariable Integer id){
 
         return clientesRepository.findById(id)
@@ -39,6 +49,7 @@ public class ClienteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Salva um novo cliente")
     public Cliente save(@RequestBody @Valid Cliente cliente){
         return clientesRepository.save(cliente);
     }

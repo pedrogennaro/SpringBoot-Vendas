@@ -3,6 +3,7 @@ package io.github.pedrogennaro.api.controller;
 import io.github.pedrogennaro.api.ApiErrors;
 import io.github.pedrogennaro.exception.PedidoNaoEncontradoException;
 import io.github.pedrogennaro.exception.RegraNegocioException;
+import io.github.pedrogennaro.exception.UsuarioJaExisteException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +25,12 @@ public class ApplicationControllerAdvice {
     @ExceptionHandler(PedidoNaoEncontradoException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiErrors handlerPedidoNaoEncontradoException(PedidoNaoEncontradoException ex){
+        return new ApiErrors(ex.getMessage());
+    }
 
+    @ExceptionHandler(UsuarioJaExisteException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrors handlerUsuarioJaExisteException(UsuarioJaExisteException ex){
         return new ApiErrors(ex.getMessage());
     }
 

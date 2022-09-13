@@ -5,6 +5,7 @@ import io.github.pedrogennaro.api.dto.UsuarioDTO;
 import io.github.pedrogennaro.domain.entity.Usuario;
 import io.github.pedrogennaro.domain.repository.UsuarioRepository;
 import io.github.pedrogennaro.exception.SenhaInvalidaException;
+import io.github.pedrogennaro.exception.UsuarioJaExisteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Service
 public class UsuarioServiceImpl implements UserDetailsService {
@@ -55,10 +57,14 @@ public class UsuarioServiceImpl implements UserDetailsService {
 
     @Transactional
     public UsuarioDTO save(Usuario usuario){
-        String passwordCripto = passwordEncoder.encode(usuario.getSenha());
-        usuario.setSenha(passwordCripto);
-        Usuario usuarioSalvo = usuarioRepository.save(usuario);
-        return converterUsuario(usuarioSalvo);
+        Optional<Usuario> userExist = usuarioRepository.findByLogin(usuario.getLogin());
+        if(!userExist.isPresent()){
+            String passwordCripto = passwordEncoder.encode(usuario.getSenha());
+            usuario.setSenha(passwordCripto);
+            Usuario usuarioSalvo = usuarioRepository.save(usuario);
+            return converterUsuario(usuarioSalvo);
+        }
+        throw new UsuarioJaExisteException();
     }
 
     private UsuarioDTO converterUsuario(Usuario usuario){
